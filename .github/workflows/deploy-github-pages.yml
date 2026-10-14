@@ -44,6 +44,7 @@ jobs:
           # Static export cannot include the photo upload API route.
           rm -rf src/app/api
           NEXT_EXPORT=1 bun run build
+          echo "build ${GITHUB_SHA} $(date -u '+%Y-%m-%d %H:%M UTC')" > out/version.txt
           touch out/.nojekyll
 
       - name: Publish to gh-pages branch
