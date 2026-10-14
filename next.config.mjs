@@ -12,7 +12,7 @@ function normalizeBasePath(value) {
 
 const isStaticExport = process.env.NEXT_EXPORT === "1";
 const basePath = normalizeBasePath(
-  process.env.NEXT_PUBLIC_BASE_PATH ||
+  process.env.NEXT_PUBLIC_BASE_PATH ??
     (isStaticExport ? "/petrozavodsk-tour" : "")
 );
 

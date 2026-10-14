@@ -21,3 +21,13 @@ bun run dev
 ## Деплой
 
 [Документация Cloud.ru](https://cloud.ru/docs/container-apps-evolution/ug/topics/quickstart)
+
+### GitHub Pages
+
+Workflow `Deploy to GitHub Pages` собирает статический сайт при push в `main` или
+`master` и публикует содержимое `out/` в отдельную ветку `gh-pages`.
+
+После первого успешного запуска откройте **Settings → Pages** и выберите источник
+**Deploy from a branch**, ветку `gh-pages` и папку `/(root)`. Workflow должен иметь
+разрешение записи содержимого репозитория (**Settings → Actions → General → Workflow
+permissions → Read and write permissions**).
