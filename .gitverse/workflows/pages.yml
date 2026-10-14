@@ -1,0 +1,87 @@
+# GitVerse Pages: сборка статического экспорта и публикация.
+#
+# Как это работает:
+# 1. При каждом пуше в main/master (или запуске вручную) runner собирает сайт
+#    в статические файлы (команда `bun run build:pages`, результат — папка out/).
+#    API-маршрут (src/app/api) перед сборкой удаляется: на статическом
+#    хостинге нет Node-сервера, приём фото работает на клиенте.
+# 2. Готовые файлы публикуются в отдельную ветку `gitverse-pages`.
+# 3. Включите Pages в настройках репозитория:
+#    Настройки → Pages → источник — ветка `gitverse-pages`.
+#
+# Подготовка (один раз):
+#   1. Создайте токен доступа в GitVerse (Профиль → Настройки → Токены доступа)
+#      с правом записи в этот репозиторий.
+#   2. Добавьте его как секрет репозитория с именем GITVERSE_TOKEN
+#      (Настройки → Секреты CI/CD).
+
+name: Deploy to GitVerse Pages
+
+on:
+  push:
+    branches: ["main", "master"]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Bun
+        run: npm install -g bun@1.3.14
+
+      - name: Install dependencies
+        run: |
+          bun install --frozen-lockfile \
+            || (rm -rf ~/.bun/install/cache && bun install --frozen-lockfile)
+
+      - name: Build static export
+        run: |
+          REPO_SLUG="${GITHUB_REPOSITORY:-${GITEA_REPOSITORY:-}}"
+          if [ -n "$REPO_SLUG" ]; then
+            REPO_NAME="${REPO_SLUG##*/}"
+            # Pages отдаёт сайт по пути в нижнем регистре
+            REPO_NAME="${REPO_NAME,,}"
+            export NEXT_PUBLIC_BASE_PATH="/${REPO_NAME}"
+            echo "basePath: /${REPO_NAME}"
+          else
+            echo "Slug репозитория не определён, используем basePath из next.config.mjs"
+          fi
+          # На статическом хостинге нет Node-сервера: API-маршрут и оптимизация
+          # изображений Next.js там не работают — сайт полностью переходит на клиент.
+          rm -rf src/app/api
+          bun run build:pages
+
+      - name: Stamp build version
+        run: echo "build ${GITHUB_SHA:-manual} $(date -u '+%Y-%m-%d %H:%M UTC')" > out/version.txt
+
+      - name: Publish to gitverse-pages branch
+        env:
+          GITVERSE_TOKEN: ${{ secrets.GITVERSE_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          # origin может содержать токен в URL — убираем его
+          REPO_URL=$(git remote get-url origin | sed -E 's#https://[^@/]+@#https://#')
+
+          rm -rf /tmp/pages-deploy
+          mkdir -p /tmp/pages-deploy
+          cp -r out/. /tmp/pages-deploy/
+          touch /tmp/pages-deploy/.nojekyll
+
+          cd /tmp/pages-deploy
+          git init -q -b gitverse-pages
+          git config user.name "gitverse-pages-bot"
+          git config user.email "pages-bot@gitverse.ru"
+          git add -A
+          git commit -qm "Deploy static site (build ${GITHUB_SHA:-manual})"
+          git remote add origin "https://gitverse-bot:${GITVERSE_TOKEN}@${REPO_URL#https://}"
+          if ! git push -q --force origin gitverse-pages 2>/dev/null; then
+            echo "Пуш с GITVERSE_TOKEN не удался, пробую авторизацию раннера…"
+            git remote set-url origin "$REPO_URL"
+            git push -q --force origin gitverse-pages
+          fi
+
+          echo "Published: ${REPO_URL} (branch gitverse-pages)"
