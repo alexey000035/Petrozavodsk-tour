@@ -1,0 +1,4 @@
+:HL["/Petrozavodsk-tour/_next/static/chunks/0m2xjs.z-auf-.css","style"]
+:HL["/Petrozavodsk-tour/_next/static/media/GeistMono_Variable.p.05wdprr-k~q7o.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/Petrozavodsk-tour/_next/static/media/Geist_Variable-s.p.014y-whght5cd.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}},"staleTime":300,"buildId":"oeOrkoGWckDfV6D_9Ethy"}

@@ -1,0 +1,6 @@
+1:"$Sreact.fragment"
+2:I[86494,["/Petrozavodsk-tour/_next/static/chunks/0a24dnzw6s024.js","/Petrozavodsk-tour/_next/static/chunks/0dcjz8va12gb0.js","/Petrozavodsk-tour/_next/static/chunks/0d-qcf3_fxign.js"],""]
+3:I[81604,["/Petrozavodsk-tour/_next/static/chunks/0a24dnzw6s024.js","/Petrozavodsk-tour/_next/static/chunks/0dcjz8va12gb0.js"],"OutletBoundary"]
+4:"$Sreact.suspense"
+0:{"rsc":["$","$1","c",{"children":[["$","div",null,{"className":"flex min-h-screen items-center justify-center bg-background","children":["$","div",null,{"className":"text-center","children":[["$","h1",null,{"className":"text-4xl font-bold text-foreground mb-4","children":"404"}],["$","p",null,{"className":"text-xl text-muted-foreground mb-4","children":"Страница не найдена"}],["$","$L2",null,{"href":"/","className":"text-primary hover:text-primary/80 underline","children":"Вернуться на главную"}]]}]}],[["$","script","script-0",{"src":"/Petrozavodsk-tour/_next/static/chunks/0d-qcf3_fxign.js","async":true}]],["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"oeOrkoGWckDfV6D_9Ethy"}
+5:null
