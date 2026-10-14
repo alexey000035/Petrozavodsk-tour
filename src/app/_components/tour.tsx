@@ -28,25 +28,39 @@ const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 type Step =
   | "intro"
   | "stop1"
+  | "travel1"
   | "stop2"
+  | "travel2"
   | "stop3"
+  | "travel3"
   | "stop4"
+  | "travel4"
   | "stop5"
+  | "travel5"
   | "stop6"
+  | "travel6"
   | "stop7"
+  | "travel7"
   | "conclusion";
 
-const STORAGE_KEY = "ilmarinen-tour-step-v2";
+const STORAGE_KEY = "ilmarinen-tour-step-v3";
 
 const STEP_ORDER: Step[] = [
   "intro",
   "stop1",
+  "travel1",
   "stop2",
+  "travel2",
   "stop3",
+  "travel3",
   "stop4",
+  "travel4",
   "stop5",
+  "travel5",
   "stop6",
+  "travel6",
   "stop7",
+  "travel7",
   "conclusion",
 ];
 
@@ -78,12 +92,19 @@ export function Tour() {
     const saved = window.localStorage.getItem(STORAGE_KEY);
     if (
       saved === "stop1" ||
+      saved === "travel1" ||
       saved === "stop2" ||
+      saved === "travel2" ||
       saved === "stop3" ||
+      saved === "travel3" ||
       saved === "stop4" ||
+      saved === "travel4" ||
       saved === "stop5" ||
+      saved === "travel5" ||
       saved === "stop6" ||
+      saved === "travel6" ||
       saved === "stop7" ||
+      saved === "travel7" ||
       saved === "conclusion"
     ) {
       setStep(saved);
@@ -137,13 +158,20 @@ export function Tour() {
         {ready && (
           <div key={step} className="animate-fade-up">
             {step === "intro" && <IntroScreen onStart={() => go("stop1")} />}
-            {step === "stop1" && <Stop1Screen onDone={() => go("stop2")} />}
-            {step === "stop2" && <Stop2Screen onDone={() => go("stop3")} />}
-            {step === "stop3" && <Stop3Screen onDone={() => go("stop4")} />}
-            {step === "stop4" && <Stop4Screen onDone={() => go("stop5")} />}
-            {step === "stop5" && <Stop5Screen onDone={() => go("stop6")} />}
-            {step === "stop6" && <Stop6Screen onDone={() => go("stop7")} />}
-            {step === "stop7" && <Stop7Screen onDone={() => go("conclusion")} />}
+            {step === "stop1" && <Stop1Screen onDone={() => go("travel1")} />}
+            {step === "travel1" && <TravelScreen onContinue={() => go("stop2")} />}
+            {step === "stop2" && <Stop2Screen onDone={() => go("travel2")} />}
+            {step === "travel2" && <TravelScreen onContinue={() => go("stop3")} />}
+            {step === "stop3" && <Stop3Screen onDone={() => go("travel3")} />}
+            {step === "travel3" && <TravelScreen onContinue={() => go("stop4")} />}
+            {step === "stop4" && <Stop4Screen onDone={() => go("travel4")} />}
+            {step === "travel4" && <TravelScreen onContinue={() => go("stop5")} />}
+            {step === "stop5" && <Stop5Screen onDone={() => go("travel5")} />}
+            {step === "travel5" && <TravelScreen onContinue={() => go("stop6")} />}
+            {step === "stop6" && <Stop6Screen onDone={() => go("travel6")} />}
+            {step === "travel6" && <TravelScreen onContinue={() => go("stop7")} />}
+            {step === "stop7" && <Stop7Screen onDone={() => go("travel7")} />}
+            {step === "travel7" && <TravelScreen onContinue={() => go("conclusion")} />}
             {step === "conclusion" && <ConclusionScreen onFinish={goHome} />}
           </div>
         )}
@@ -240,6 +268,17 @@ function TaskCard({
   );
 }
 
+function HistoryCard({ children }: { children: ReactNode }) {
+  return (
+    <section className="space-y-4 rounded-2xl border border-amber-100/20 bg-card/40 p-5">
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-500">
+        Историческая справка
+      </p>
+      <div className="space-y-4">{children}</div>
+    </section>
+  );
+}
+
 function StopHeader({ n, name }: { n: number; name: string }) {
   return (
     <header className="flex items-center justify-between gap-4 rounded-2xl border border-border bg-card/70 px-5 py-4 backdrop-blur-sm">
@@ -264,6 +303,34 @@ function StopHeader({ n, name }: { n: number; name: string }) {
         ))}
       </div>
     </header>
+  );
+}
+
+function TravelScreen({ onContinue }: { onContinue: () => void }) {
+  return (
+    <div className="flex min-h-[70vh] flex-col items-center justify-between py-12 text-center">
+      <div className="flex flex-1 flex-col items-center justify-center gap-10">
+        <div
+          aria-hidden
+          className="relative h-36 w-36 rounded-full border border-amber-500/35 bg-card/60 shadow-[0_0_55px_-20px_rgba(245,158,11,0.45)]"
+        >
+          <div className="absolute inset-2 rounded-full border border-border/70" />
+          <span className="absolute left-1/2 top-3 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-amber-300" />
+          <span className="absolute bottom-3 left-1/2 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-amber-300" />
+          <span className="absolute left-3 top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-amber-300" />
+          <span className="absolute right-3 top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-amber-300" />
+          <span className="absolute bottom-1/2 left-1/2 ml-[-1px] h-11 w-0.5 origin-bottom rounded-full bg-amber-100 animate-[spin_60s_steps(60)_infinite]" />
+          <span className="absolute bottom-1/2 left-1/2 ml-[-1.5px] h-8 w-[3px] origin-bottom rounded-full bg-amber-500 animate-[spin_3600s_linear_infinite]" />
+          <span className="absolute left-1/2 top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-400" />
+        </div>
+        <h1 className="max-w-xs font-serif text-3xl leading-tight text-foreground">
+          Следуйте за проводником
+        </h1>
+      </div>
+      <PrimaryButton onClick={onContinue} className="max-w-sm">
+        Я на месте
+      </PrimaryButton>
+    </div>
   );
 }
 
@@ -498,6 +565,65 @@ function RiddleTask({ onDone }: { onDone: () => void }) {
   );
 }
 
+function NumberTask({ onDone }: { onDone: () => void }) {
+  const [value, setValue] = useState("");
+  const [status, setStatus] = useState<"idle" | "wrong" | "correct">("idle");
+
+  function submit(event: FormEvent) {
+    event.preventDefault();
+    if (status === "correct") return;
+    if (value.trim() === "23") {
+      setStatus("correct");
+      window.setTimeout(onDone, 1200);
+    } else {
+      setStatus("wrong");
+    }
+  }
+
+  return (
+    <form
+      onSubmit={submit}
+      noValidate
+      className={cn("space-y-3", status === "wrong" && "animate-shake")}
+    >
+      <label
+        htmlFor="tree-count-answer"
+        className="block text-xs font-semibold uppercase tracking-[0.25em] text-amber-500"
+      >
+        Сколько скворечников вы насчитали?
+      </label>
+      <input
+        id="tree-count-answer"
+        type="text"
+        inputMode="numeric"
+        value={value}
+        onChange={(event) => {
+          setValue(event.target.value);
+          if (status === "wrong") setStatus("idle");
+        }}
+        disabled={status === "correct"}
+        autoComplete="off"
+        placeholder="Введите число"
+        className="w-full rounded-xl border border-input bg-black/40 px-4 py-3.5 text-base text-foreground outline-none transition placeholder:text-stone-600 focus:border-amber-500/60 focus:ring-2 focus:ring-amber-500/30 disabled:opacity-70"
+      />
+      {status === "correct" ? (
+        <p className="flex items-center gap-2 text-sm font-medium text-amber-300">
+          <Check className="h-4 w-4" /> Верно! Идём дальше.
+        </p>
+      ) : (
+        <>
+          <PrimaryButton type="submit" className="py-3.5">
+            Ответить
+          </PrimaryButton>
+          {status === "wrong" && (
+            <p className="text-sm text-red-400">Неверно. Попробуйте ещё раз.</p>
+          )}
+        </>
+      )}
+    </form>
+  );
+}
+
 function Stop1Screen({ onDone }: { onDone: () => void }) {
   return (
     <div className="space-y-8">
@@ -507,16 +633,18 @@ function Stop1Screen({ onDone }: { onDone: () => void }) {
           Я начал с огня. <Em>Без огня нет железа. Без железа нет города.</Em>
         </P>
         <P>Здесь, где вы стоите, когда-то были только лес и ветер.</P>
-        <P>
-          Этот город берет начало в далеком <Em>1703 году</Em>. В начале XVIII века Россия
-          воевала со Швецией за выход к Балтийскому морю. Нужны были пушки, ядра, якоря.
-          Пётр I узнал от местных карел, что здесь, на реке Лососинке, издавна плавят
-          железо — в маленьких кузницах, по-старинке. Он понял: здесь будет завод.
-        </P>
-        <P>
-          <Em>29 августа 1703 года</Em> здесь заложили Шуйский железоделательный завод.
-          Вокруг завода выросла Петровская слобода.
-        </P>
+        <HistoryCard>
+          <P>
+            Этот город берет начало в далеком <Em>1703 году</Em>. В начале XVIII века
+            Россия воевала со Швецией за выход к Балтийскому морю. Нужны были пушки, ядра,
+            якоря. Пётр I узнал от местных карел, что здесь, на реке Лососинке, издавна
+            плавят железо — в маленьких кузницах, по-старинке. Он понял: здесь будет завод.
+          </P>
+          <P>
+            <Em>29 августа 1703 года</Em> здесь заложили Шуйский железоделательный завод.
+            Вокруг завода выросла Петровская слобода.
+          </P>
+        </HistoryCard>
         <P>
           Огонь, который я зажег здесь, не погас. <Em>Он стал городом.</Em>
         </P>
@@ -529,12 +657,10 @@ function Stop1Screen({ onDone }: { onDone: () => void }) {
       <TaskCard icon={<Hammer className="h-4 w-4" />}>
         <p>
           Найдите на вокзале что-нибудь железное: рельс, ограду, фонарь, петлю на двери,
-          старую скобу. Приложите к нему ладонь. Почувствуйте холод. Это не просто металл.{" "}
-          <Em>Это память об огне.</Em>
+          старую скобу. Приложите к нему ладонь. Это не просто металл. <Em>Это память об огне.</Em>
         </p>
         <p>
-          Сфотографируйте команду так, чтобы <Em>рука каждого из вас касалась металла</Em>.
-          Отправьте фото.
+          Сделайте фотографию так, чтобы рука касалась металла (или была на его фоне).
         </p>
         <PhotoTask onDone={onDone} />
       </TaskCard>
@@ -606,7 +732,7 @@ function Stop2Screen({ onDone }: { onDone: () => void }) {
   return (
     <div className="space-y-8">
       <StopHeader n={2} name={STOP_NAMES[1]} />
-      <div className="space-y-4">
+      <HistoryCard>
         <P>
           Перед вами необычный памятник — не человеку и не военному событию, а научной
           идее. Он находится на Студенческом бульваре, напротив главного здания
@@ -624,12 +750,12 @@ function Stop2Screen({ onDone }: { onDone: () => void }) {
           создают новое.
         </P>
         <P>
-          Фуллерены — особая форма <Em>углерода</Em>. Их молекулы состоят из атомов,
+          Фуллерены — особая форма ЭТОГО ВЕЩЕСТВА. Их молекулы состоят из атомов,
           соединённых в замкнутую структуру, напоминающую сферу или многогранник. Почему
           такая молекула появилась именно в Карелии? Регион известен шунгитом — редкой
-          горной породой, содержащей углерод.
+          горной породой, содержащей ЭТО ВЕЩЕСТВО.
         </P>
-      </div>
+      </HistoryCard>
       <Divider />
       <TaskCard icon={<Flame className="h-4 w-4" />}>
         <ChoiceTask onDone={onDone} />
@@ -647,6 +773,8 @@ function Stop3Screen({ onDone }: { onDone: () => void }) {
           Я ковал железо. Я ковал небо. Я ковал Сампо. Но прежде чем что-то выковать,
           мастер должен знать форму.
         </P>
+      </div>
+      <HistoryCard>
         <P>
           Перед вами одно из самых важных исторических мест Петрозаводска. Сегодня площадь
           носит имя Ленина, но в разные годы её называли Круглой, Циркульной,
@@ -673,7 +801,7 @@ function Stop3Screen({ onDone }: { onDone: () => void }) {
           ансамблей XVIII века в Петрозаводске. Она напоминает, что город строится не
           только вокруг заводов, но и вокруг порядка, управления и общих решений.
         </P>
-      </div>
+      </HistoryCard>
       <Divider />
       <TaskCard icon={<Camera className="h-4 w-4" />}>
         <p>
@@ -690,11 +818,11 @@ function Stop4Screen({ onDone }: { onDone: () => void }) {
   return (
     <div className="space-y-8">
       <StopHeader n={4} name={STOP_NAMES[3]} />
-      <div className="space-y-4">
-        <P>
-          Я ковал железо. Я ковал форму. А здесь, в этом парке, жил человек, который бил
-          словом.
-        </P>
+      <P>
+        Я ковал железо. Я ковал форму. А здесь, в этом парке, жил человек, который бил
+        словом.
+      </P>
+      <HistoryCard>
         <P>
           В 1784 году Екатерина II назначила Гавриила Романовича Державина первым
           губернатором Олонецкой губернии. Он приехал сюда на год — но успел много. При нём
@@ -709,7 +837,7 @@ function Stop4Screen({ onDone }: { onDone: () => void }) {
         <P>
           Здесь, в этом парке, стоит памятник не губернатору. Здесь стоит памятник слову.
         </P>
-      </div>
+      </HistoryCard>
       <Divider />
       <TaskCard icon={<Feather className="h-4 w-4" />}>
         <p>
@@ -740,17 +868,17 @@ function Stop5Screen({ onDone }: { onDone: () => void }) {
   return (
     <div className="space-y-8">
       <StopHeader n={5} name={STOP_NAMES[4]} />
-      <div className="space-y-4">
-        <P>
-          Державин был мастером слова. А этот человек — мастер дела. Слушайте историю.
-        </P>
+      <P>
+        Державин был мастером слова. А этот человек — мастер дела. Слушайте историю.
+      </P>
+      <HistoryCard>
         <P>
           Перед вами памятник человеку, который помог изменить историю местного
           производства. Его звали Чарльз Гаскойн, а в России его называли Карлом
           Карловичем.
         </P>
         <P>
-          Гаскойн родился в Шотландии в 1739 году. Он был инженером, металлургом и
+          Гаскойн родился в Шотландии в <Em>1739 году</Em>. Он был инженером, металлургом и
           специалистом по оружейному производству. В Россию его пригласила Екатерина II —
           стране требовались люди, способные развивать промышленность и совершенствовать
           производство вооружения.
@@ -772,8 +900,11 @@ function Stop5Screen({ onDone }: { onDone: () => void }) {
           полководцы, но и инженеры, мастера, изобретатели — люди, которые меняли
           повседневную жизнь с помощью знаний и труда.
         </P>
-      </div>
-      <PrimaryButton onClick={onDone}>Продолжить</PrimaryButton>
+      </HistoryCard>
+      <TaskCard icon={<Hammer className="h-4 w-4" />}>
+        <p>...</p>
+        <PrimaryButton onClick={onDone}>Я выполнил задание</PrimaryButton>
+      </TaskCard>
     </div>
   );
 }
@@ -782,7 +913,7 @@ function Stop6Screen({ onDone }: { onDone: () => void }) {
   return (
     <div className="space-y-8">
       <StopHeader n={6} name={STOP_NAMES[5]} />
-      <div className="space-y-4">
+      <HistoryCard>
         <P>
           Теперь мы оказываемся в пространстве, где город говорит со зрителем языком
           сцены. Театр — особая часть городской культуры: здесь оживают истории, звучат
@@ -803,7 +934,7 @@ function Stop6Screen({ onDone }: { onDone: () => void }) {
           В карельском эпосе «Калевала» живёт множество необыкновенных героев. Среди них —
           я, Илмаринен, кузнец, который способен создавать удивительные вещи.
         </P>
-      </div>
+      </HistoryCard>
       <Divider />
       <TaskCard icon={<Camera className="h-4 w-4" />}>
         <p>Я оставил в городе свой образ. Найдите статую Илмаринена и сделайте фотографию на его фоне.</p>
@@ -817,11 +948,13 @@ function Stop7Screen({ onDone }: { onDone: () => void }) {
   return (
     <div className="space-y-8">
       <StopHeader n={7} name={STOP_NAMES[6]} />
-      <div className="space-y-4">
+      <HistoryCard>
         <P>
-          Наш путь завершает Онежская набережная — место, где город встречается с огромным
-          пространством озера. Здесь можно увидеть не только воду и панораму Петрозаводской
-          губы, но и целую галерею необычных скульптур.
+          Наш путь завершает Онежская набережная — место, где вокруг только морская гладь.
+          Да, вы не ослышались. В древнерусских летописях, сказаниях и народном фольклоре
+          Онежское озеро из-за его колоссальных размеров часто уважительно величали{" "}
+          <Em>«Онего-батюшкой»</Em>. Здесь можно увидеть не только воду и панораму
+          Петрозаводской губы, но и целую галерею необычных скульптур.
         </P>
         <P>
           История современной скульптурной набережной началась в 1991 году. Тогда
@@ -840,12 +973,14 @@ function Stop7Screen({ onDone }: { onDone: () => void }) {
           художественные языки и культурные традиции. Каждая скульптура рассказывает не
           только о своём авторе, но и о городе, который её подарил.
         </P>
-        <P>
-          Вы прошли весь путь. Вы увидели город, который начинался с железа и огня, вырос
-          благодаря труду мастеров и инженеров, стал местом науки, искусства и поэзии.
-        </P>
-      </div>
-      <PrimaryButton onClick={onDone}>Завершить маршрут</PrimaryButton>
+      </HistoryCard>
+      <TaskCard icon={<Feather className="h-4 w-4" />}>
+        <p>
+          Найдите Дерево желаний. Подойдите к нему, прошепчите своё самое сокровенное
+          желание и попробуйте посчитать количество скворечников.
+        </p>
+        <NumberTask onDone={onDone} />
+      </TaskCard>
     </div>
   );
 }
@@ -853,6 +988,16 @@ function Stop7Screen({ onDone }: { onDone: () => void }) {
 function ConclusionScreen({ onFinish }: { onFinish: () => void }) {
   return (
     <div className="space-y-8">
+      <div className="relative aspect-[3/2] w-full overflow-hidden rounded-2xl border border-amber-500/25 shadow-[0_0_70px_-18px_rgba(245,158,11,0.6)]">
+        <Image
+          src={`${BASE_PATH}/ilmarinen.webp`}
+          alt="Кузнец Илмаринен у горна"
+          fill
+          sizes="(max-width: 640px) 100vw, 576px"
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0b0805] via-transparent to-transparent" />
+      </div>
       <header className="space-y-3 text-center">
         <p className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-amber-500">
           <Flame className="h-4 w-4 animate-flicker" />
