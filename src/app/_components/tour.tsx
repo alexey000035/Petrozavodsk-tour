@@ -13,10 +13,8 @@ import {
   ArrowLeft,
   Camera,
   Check,
-  Ear,
   Feather,
   Flame,
-  Footprints,
   Hammer,
   Home,
   Loader2,
@@ -27,26 +25,39 @@ import { cn } from "@/lib/utils";
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
-type Step = "intro" | "stop1" | "sign1" | "stop2" | "stop3" | "stop4" | "stop5";
+type Step =
+  | "intro"
+  | "stop1"
+  | "stop2"
+  | "stop3"
+  | "stop4"
+  | "stop5"
+  | "stop6"
+  | "stop7"
+  | "conclusion";
 
-const STORAGE_KEY = "ilmarinen-tour-step";
+const STORAGE_KEY = "ilmarinen-tour-step-v2";
 
 const STEP_ORDER: Step[] = [
   "intro",
   "stop1",
-  "sign1",
   "stop2",
   "stop3",
   "stop4",
   "stop5",
+  "stop6",
+  "stop7",
+  "conclusion",
 ];
 
 const STOP_NAMES = [
   "Железнодорожный вокзал",
+  "Молекула",
   "Круглая площадь",
-  "Парк Державина",
+  "Губернаторский парк",
   "Памятник Гаскойну",
   "Театральная площадь",
+  "Онежская набережная",
 ];
 
 const EMBERS = [
@@ -67,11 +78,13 @@ export function Tour() {
     const saved = window.localStorage.getItem(STORAGE_KEY);
     if (
       saved === "stop1" ||
-      saved === "sign1" ||
       saved === "stop2" ||
       saved === "stop3" ||
       saved === "stop4" ||
-      saved === "stop5"
+      saved === "stop5" ||
+      saved === "stop6" ||
+      saved === "stop7" ||
+      saved === "conclusion"
     ) {
       setStep(saved);
     }
@@ -124,12 +137,14 @@ export function Tour() {
         {ready && (
           <div key={step} className="animate-fade-up">
             {step === "intro" && <IntroScreen onStart={() => go("stop1")} />}
-            {step === "stop1" && <Stop1Screen onDone={() => go("sign1")} />}
-            {step === "sign1" && <Sign1Screen onContinue={() => go("stop2")} />}
+            {step === "stop1" && <Stop1Screen onDone={() => go("stop2")} />}
             {step === "stop2" && <Stop2Screen onDone={() => go("stop3")} />}
             {step === "stop3" && <Stop3Screen onDone={() => go("stop4")} />}
             {step === "stop4" && <Stop4Screen onDone={() => go("stop5")} />}
-            {step === "stop5" && <Stop5Screen />}
+            {step === "stop5" && <Stop5Screen onDone={() => go("stop6")} />}
+            {step === "stop6" && <Stop6Screen onDone={() => go("stop7")} />}
+            {step === "stop7" && <Stop7Screen onDone={() => go("conclusion")} />}
+            {step === "conclusion" && <ConclusionScreen onFinish={goHome} />}
           </div>
         )}
       </main>
@@ -165,14 +180,6 @@ function P({ children, className }: { children: ReactNode; className?: string })
 
 function Em({ children }: { children: ReactNode }) {
   return <strong className="font-semibold text-amber-200">{children}</strong>;
-}
-
-function Quote({ children }: { children: ReactNode }) {
-  return (
-    <blockquote className="border-l-2 border-amber-500/60 py-1 pl-4 font-serif text-lg italic leading-7 text-amber-100">
-      {children}
-    </blockquote>
-  );
 }
 
 function Divider() {
@@ -225,7 +232,7 @@ function TaskCard({
       <div className="flex items-center gap-2 text-amber-400">
         {icon}
         <span className="text-xs font-semibold uppercase tracking-[0.25em]">
-          Задание Ильмаринена
+          Задание Илмаринена
         </span>
       </div>
       <div className="mt-3 space-y-3 text-[15px] leading-7 text-amber-50/90">{children}</div>
@@ -238,7 +245,7 @@ function StopHeader({ n, name }: { n: number; name: string }) {
     <header className="flex items-center justify-between gap-4 rounded-2xl border border-border bg-card/70 px-5 py-4 backdrop-blur-sm">
       <div>
         <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-amber-500">
-          Точка {n} из 5
+          Точка {n} из {STOP_NAMES.length}
         </p>
         <h2 className="mt-1 font-serif text-xl leading-snug text-foreground">{name}</h2>
       </div>
@@ -266,7 +273,7 @@ function IntroScreen({ onStart }: { onStart: () => void }) {
       <div className="relative aspect-[3/2] w-full overflow-hidden rounded-2xl border border-amber-500/25 shadow-[0_0_70px_-18px_rgba(245,158,11,0.6)]">
         <Image
           src={`${BASE_PATH}/ilmarinen.webp`}
-          alt="Кузнец Ильмаринен у горна, из молота летят искры"
+          alt="Кузнец Илмаринен у горна, из молота летят искры"
           fill
           priority
           sizes="(max-width: 640px) 100vw, 576px"
@@ -278,47 +285,29 @@ function IntroScreen({ onStart }: { onStart: () => void }) {
       <header className="space-y-2 text-center">
         <p className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-amber-500">
           <Flame className="h-4 w-4 animate-flicker" />
-          Кузнец Ильмаринен
+          Кузнец Илмаринен
           <Flame className="h-4 w-4 animate-flicker" />
         </p>
         <h1 className="font-serif text-3xl leading-tight text-foreground">
-          Приветствую вас, путники
+          Здравствуй, путник!
         </h1>
       </header>
 
       <div className="space-y-4">
         <P>
-          Я — кузнец Ильмаринен. Тот, кто выковал <Em>небо и Сампо</Em>. Тот, чьи молоты
-          изображены на гербе Петрозаводска. Тот, кто стоял здесь, когда не было ни города,
-          ни завода — только руда, огонь и вода.
+          Я — Илмаринен, кузнец из древних карельских рун. Я выковал небесный свод и
+          знаменитую мельницу «Сампо». Но даже самая искусная работа не рождается из
+          одного удара молота: ей нужны огонь, терпение, знание и память.
         </P>
         <P>
-          Я не мастер красивых слов. <Em>Я мастер дела.</Em>
+          Я пришёл в Петрозаводск не случайно. Этот город тоже родился у огня — у заводских
+          печей, где плавили металл и отливали пушки. Со временем слобода превратилась в
+          город, где наука, искусство, производство и люди сплетаются воедино.
         </P>
         <P>
-          Вы пришли узнать историю этого места. Хорошо. Я расскажу вам её. Но слушайте
-          внимательно и запоминайте правила: <Em>вы посетите 5 мест.</Em>
+          Сегодня вам предстоит пройти большой путь. Вы не соперники — вы одна команда.
+          Обсуждайте загадки, помогайте друг другу и не бойтесь ошибаться.
         </P>
-        <P>
-          На каждой точке вы найдёте знак — то, что я оставил. <Em>Соберите их.</Em> В конце
-          увидите, что получилось.
-        </P>
-      </div>
-
-      <div className="rounded-2xl border border-border bg-card/70 p-5">
-        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-amber-500">
-          Правила
-        </p>
-        <ul className="mt-3 space-y-3">
-          <li className="flex items-start gap-3 text-[15px] leading-6 text-stone-300">
-            <Footprints className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
-            идите быстро, но не бегите
-          </li>
-          <li className="flex items-start gap-3 text-[15px] leading-6 text-stone-300">
-            <Ear className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
-            слушайте. Я не повторяю
-          </li>
-        </ul>
       </div>
 
       <P className="text-center text-stone-400">Ваш проводник покажет дорогу.</P>
@@ -501,9 +490,7 @@ function RiddleTask({ onDone }: { onDone: () => void }) {
             Ответить
           </PrimaryButton>
           {status === "wrong" && (
-            <p className="text-sm text-red-400">
-              Неверно. Я не повторяю — но попробуйте ещё раз.
-            </p>
+            <p className="text-sm text-red-400">Попробуйте ещё раз.</p>
           )}
         </>
       )}
@@ -555,39 +542,63 @@ function Stop1Screen({ onDone }: { onDone: () => void }) {
   );
 }
 
-function Sign1Screen({ onContinue }: { onContinue: () => void }) {
+function ChoiceTask({ onDone }: { onDone: () => void }) {
+  const [value, setValue] = useState("");
+  const [status, setStatus] = useState<"idle" | "wrong" | "correct">("idle");
+
+  function submit(event: FormEvent) {
+    event.preventDefault();
+    if (status === "correct") return;
+    if (value === "Углерод") {
+      setStatus("correct");
+      window.setTimeout(onDone, 1200);
+    } else {
+      setStatus("wrong");
+    }
+  }
+
   return (
-    <div className="flex min-h-[75vh] flex-col items-center justify-center gap-8 text-center">
-      <div className="space-y-6">
-        <p className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-amber-500">
-          <Flame className="h-4 w-4 animate-flicker" />
-          Первый знак найден
-          <Flame className="h-4 w-4 animate-flicker" />
-        </p>
-        <p className="animate-flicker font-serif text-6xl text-amber-300 text-glow sm:text-7xl">
-          Петргу
-        </p>
-        <p className="mx-auto max-w-xs text-[15px] leading-7 text-stone-400">
-          Запомните его. В конце маршрута увидите, что получилось.
-        </p>
-      </div>
-      <div className="flex gap-1.5" aria-hidden>
-        {STOP_NAMES.map((_, index) => (
-          <span
-            key={index}
-            className={cn(
-              "h-2 w-2 rounded-full",
-              index === 0
-                ? "bg-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.9)]"
-                : "bg-stone-700"
-            )}
-          />
+    <form onSubmit={submit} className="space-y-3">
+      <fieldset className="space-y-3">
+        <legend className="text-sm font-medium text-amber-50">
+          Какое вещество изображено в виде этой необычной геометрической конструкции?
+        </legend>
+        {["Кеплерат", "Углерод", "Боросферен"].map((answer) => (
+          <label
+            key={answer}
+            className="flex cursor-pointer items-center gap-3 rounded-xl border border-border bg-black/25 px-4 py-3 text-sm text-stone-200 transition hover:border-amber-500/50 has-[:checked]:border-amber-500/70 has-[:checked]:bg-amber-500/10"
+          >
+            <input
+              type="radio"
+              name="molecule-answer"
+              value={answer}
+              checked={value === answer}
+              onChange={() => {
+                setValue(answer);
+                if (status === "wrong") setStatus("idle");
+              }}
+              disabled={status === "correct"}
+              className="h-4 w-4 accent-amber-500"
+            />
+            {answer}
+          </label>
         ))}
-      </div>
-      <PrimaryButton onClick={onContinue} className="max-w-xs">
-        Продолжить
-      </PrimaryButton>
-    </div>
+      </fieldset>
+      {status === "correct" ? (
+        <p className="flex items-center gap-2 text-sm font-medium text-amber-300">
+          <Check className="h-4 w-4" /> Верно! Идём дальше.
+        </p>
+      ) : (
+        <>
+          <PrimaryButton type="submit" className="py-3.5">
+            Ответить
+          </PrimaryButton>
+          {status === "wrong" && (
+            <p className="text-sm text-red-400">Попробуйте ещё раз.</p>
+          )}
+        </>
+      )}
+    </form>
   );
 }
 
@@ -597,8 +608,49 @@ function Stop2Screen({ onDone }: { onDone: () => void }) {
       <StopHeader n={2} name={STOP_NAMES[1]} />
       <div className="space-y-4">
         <P>
-          Я ковал железо. Я ковал небо. Я ковал Сампо. Но прежде чем что-то выковать,{" "}
-          <Em>мастер должен знать форму.</Em>
+          Перед вами необычный памятник — не человеку и не военному событию, а научной
+          идее. Он находится на Студенческом бульваре, напротив главного здания
+          Петрозаводского государственного университета.
+        </P>
+        <P>
+          Композиция появилась в 1996 году. Её автор — архитектор Евгений Таев. В
+          первоначальный замысел входили фонтан, скульптурная форма и стела с кораблём. В
+          народе за композицией закрепилось название «Молекула фуллерена».
+        </P>
+        <P>
+          Но у памятника есть и другой смысл. По задумке автора, фонтан должен был
+          символизировать знания и научные идеи, которые словно прорываются наружу. Рядом
+          находится университет — место, где люди задают вопросы, проверяют гипотезы и
+          создают новое.
+        </P>
+        <P>
+          Фуллерены — особая форма <Em>углерода</Em>. Их молекулы состоят из атомов,
+          соединённых в замкнутую структуру, напоминающую сферу или многогранник. Почему
+          такая молекула появилась именно в Карелии? Регион известен шунгитом — редкой
+          горной породой, содержащей углерод.
+        </P>
+      </div>
+      <Divider />
+      <TaskCard icon={<Flame className="h-4 w-4" />}>
+        <ChoiceTask onDone={onDone} />
+      </TaskCard>
+    </div>
+  );
+}
+
+function Stop3Screen({ onDone }: { onDone: () => void }) {
+  return (
+    <div className="space-y-8">
+      <StopHeader n={3} name={STOP_NAMES[2]} />
+      <div className="space-y-4">
+        <P>
+          Я ковал железо. Я ковал небо. Я ковал Сампо. Но прежде чем что-то выковать,
+          мастер должен знать форму.
+        </P>
+        <P>
+          Перед вами одно из самых важных исторических мест Петрозаводска. Сегодня площадь
+          носит имя Ленина, но в разные годы её называли Круглой, Циркульной,
+          Полуциркульной, площадью 25-летия Октября и Административной.
         </P>
         <P>
           Здесь, на этой площади, город впервые получил свою форму. До 1777 года
@@ -616,9 +668,11 @@ function Stop2Screen({ onDone }: { onDone: () => void }) {
           места, гауптвахту, дома для чиновников. Улицы разошлись от круга лучами — как
           трещины от удара молота по наковальне.
         </P>
-        <Quote>
-          Круг — это не украшение. Круг — это форма, из которой всё вырастет.
-        </Quote>
+        <P>
+          Круглая площадь — один из наиболее значимых сохранившихся архитектурных
+          ансамблей XVIII века в Петрозаводске. Она напоминает, что город строится не
+          только вокруг заводов, но и вокруг порядка, управления и общих решений.
+        </P>
       </div>
       <Divider />
       <TaskCard icon={<Camera className="h-4 w-4" />}>
@@ -632,14 +686,14 @@ function Stop2Screen({ onDone }: { onDone: () => void }) {
   );
 }
 
-function Stop3Screen({ onDone }: { onDone: () => void }) {
+function Stop4Screen({ onDone }: { onDone: () => void }) {
   return (
     <div className="space-y-8">
-      <StopHeader n={3} name={STOP_NAMES[2]} />
+      <StopHeader n={4} name={STOP_NAMES[3]} />
       <div className="space-y-4">
         <P>
-          Я ковал железо. Я ковал форму. А здесь, в этом парке, жил человек, который{" "}
-          <Em>бил словом</Em> — и тоже получалось.
+          Я ковал железо. Я ковал форму. А здесь, в этом парке, жил человек, который бил
+          словом.
         </P>
         <P>
           В 1784 году Екатерина II назначила Гавриила Романовича Державина первым
@@ -652,9 +706,9 @@ function Stop3Screen({ onDone }: { onDone: () => void }) {
           впечатлениями, стихотворение «Буря» — после шторма на Белом море, и ещё несколько
           стихов, где вспоминал этот чудесный край.
         </P>
-        <Quote>
+        <P>
           Здесь, в этом парке, стоит памятник не губернатору. Здесь стоит памятник слову.
-        </Quote>
+        </P>
       </div>
       <Divider />
       <TaskCard icon={<Feather className="h-4 w-4" />}>
@@ -662,7 +716,7 @@ function Stop3Screen({ onDone }: { onDone: () => void }) {
           Найдите памятник Державину. Он установлен в 2003 году скульптором Вальтером
           Сойни — финном, который долго жил в Карелии.
         </p>
-        <p>Подойдите к памятнику и попробуйте отгадать, о каком природном чуде идет речь:</p>
+        <p>Подойдите к памятнику и попробуйте отгадать, о каком природном чуде идёт речь:</p>
         <div className="rounded-xl border border-border bg-black/30 p-4 font-serif italic leading-7 text-amber-100/90">
           Алмазна сыплется гора
           <br />
@@ -682,83 +736,157 @@ function Stop3Screen({ onDone }: { onDone: () => void }) {
   );
 }
 
-function Stop4Screen({ onDone }: { onDone: () => void }) {
+function Stop5Screen({ onDone }: { onDone: () => void }) {
   return (
     <div className="space-y-8">
-      <StopHeader n={4} name={STOP_NAMES[3]} />
+      <StopHeader n={5} name={STOP_NAMES[4]} />
       <div className="space-y-4">
         <P>
-          Державин оставил слово. Слово — это обещание. Но обещание нужно исполнить.{" "}
-          <Em>Иначе оно — пустой звук.</Em>
+          Державин был мастером слова. А этот человек — мастер дела. Слушайте историю.
         </P>
         <P>
-          Державин писал указы. Кто-то должен был их выполнить. Державин описывал край.
-          Кто-то должен был его построить. Державин говорил. <Em>Кто-то должен был
-          сделать.</Em>
-        </P>
-        <P>Слушайте историю.</P>
-        <P>
-          Чарльз Гаскойн родился в Шотландии. Он был лучшим металлургом своего времени —
-          директором завода в Карроне, под Эдинбургом. Он изобрёл карронаду — короткое и
-          мощное орудие, которое пробивало борта кораблей на близком расстоянии.
+          Перед вами памятник человеку, который помог изменить историю местного
+          производства. Его звали Чарльз Гаскойн, а в России его называли Карлом
+          Карловичем.
         </P>
         <P>
-          Екатерина II пять лет уговаривала его перейти на русскую службу. В 1786 году он
-          согласился. Приехал в Петрозаводск — и полностью перестроил Александровский
-          пушечный завод.
+          Гаскойн родился в Шотландии в 1739 году. Он был инженером, металлургом и
+          специалистом по оружейному производству. В Россию его пригласила Екатерина II —
+          стране требовались люди, способные развивать промышленность и совершенствовать
+          производство вооружения.
         </P>
         <P>
-          Он разделил производство на цеха, ввёл английские станки, наладил выпуск первых в
-          России паровых машин, построил первую в России заводскую железную дорогу.
+          В Петрозаводске Гаскойн руководил Александровским пушечным и чугунолитейным
+          заводом. Под его руководством предприятие модернизировали, внедряли новые
+          технологии и улучшали качество продукции. Завод стал одним из передовых
+          механических и литейных предприятий своего времени.
         </P>
         <P>
-          За двадцать лет его руководства Петрозаводск стал{" "}
-          <Em>«столицей русского оружейного дела»</Em>. Пушки Гаскойна стояли на кораблях
-          Балтийского флота. Они стреляли в войнах с Наполеоном. Они защищали империю.
+          В <Em>1791 году</Em> на Александровском заводе изготовили первую в России
+          паровую машину. Это был важный шаг для развития отечественной техники: паровая
+          энергия открывала новые возможности для производства.
         </P>
         <P>
-          Он умер в 1806 году в Корпино. Но завещал похоронить себя здесь — в
-          Петрозаводске. <Em>Он остался в городе, который выковал.</Em>
+          Памятник Гаскойну открыли в Петрозаводске <Em>24 сентября 2021 года</Em>. Он
+          напоминает о том, что историю города создавали не только правители и
+          полководцы, но и инженеры, мастера, изобретатели — люди, которые меняли
+          повседневную жизнь с помощью знаний и труда.
         </P>
-        <Quote>Державин сказал. Гаскойн сделал. Слово стало делом.</Quote>
+      </div>
+      <PrimaryButton onClick={onDone}>Продолжить</PrimaryButton>
+    </div>
+  );
+}
+
+function Stop6Screen({ onDone }: { onDone: () => void }) {
+  return (
+    <div className="space-y-8">
+      <StopHeader n={6} name={STOP_NAMES[5]} />
+      <div className="space-y-4">
+        <P>
+          Теперь мы оказываемся в пространстве, где город говорит со зрителем языком
+          сцены. Театр — особая часть городской культуры: здесь оживают истории, звучат
+          голоса разных эпох, а люди на время становятся героями чужих судеб.
+        </P>
+        <P>
+          В Петрозаводске театральная жизнь складывалась на протяжении десятилетий.
+          Национальный театр Республики Карелия ведёт свою историю с 1932 года. Его работа
+          связана с сохранением и развитием национальных сценических традиций, в том числе
+          культуры и языков народов Карелии.
+        </P>
+        <P>
+          Театр важен не только как здание или сцена. Это место встречи разных поколений и
+          культур. На сцене могут звучать русская речь, карельские и финские слова, музыка,
+          песни и сказания, которые передавались из поколения в поколение.
+        </P>
+        <P>
+          В карельском эпосе «Калевала» живёт множество необыкновенных героев. Среди них —
+          я, Илмаринен, кузнец, который способен создавать удивительные вещи.
+        </P>
       </div>
       <Divider />
       <TaskCard icon={<Camera className="h-4 w-4" />}>
-        <p>
-          Найдите памятник Гаскойну. Он открыт в 2021 году на проспекте Карла Маркса, рядом
-          с заводом, которым Гаскойн руководил. Скульптор — Дарья Успенская.
-        </p>
-        <p>
-          Композиция состоит из бронзовой фигуры высотой более трёх метров, чугунного
-          постамента и решёток с барельефами. На решётках — рабочие в цехах, пушки, оружие,
-          карта Петрозаводска того времени.
-        </p>
-        <p>
-          Подойдите к памятнику. Встаньте все вместе. Один человек — у подножия, как мастер
-          у станка. Остальные — рядом, как рабочие у горна.
-        </p>
-        <p>
-          Сфотографируйте команду так, чтобы <Em>фигура Гаскойна и хотя бы один барельеф</Em>{" "}
-          были в кадре.
-        </p>
+        <p>Я оставил в городе свой образ. Найдите статую Илмаринена и сделайте фотографию на его фоне.</p>
         <PhotoTask onDone={onDone} />
       </TaskCard>
     </div>
   );
 }
 
-function Stop5Screen() {
+function Stop7Screen({ onDone }: { onDone: () => void }) {
   return (
     <div className="space-y-8">
-      <StopHeader n={5} name={STOP_NAMES[4]} />
+      <StopHeader n={7} name={STOP_NAMES[6]} />
       <div className="space-y-4">
         <P>
-          Пятая точка маршрута. <Em>Театральная площадь.</Em>
+          Наш путь завершает Онежская набережная — место, где город встречается с огромным
+          пространством озера. Здесь можно увидеть не только воду и панораму Петрозаводской
+          губы, но и целую галерею необычных скульптур.
         </P>
-        <p className="rounded-2xl border border-dashed border-border bg-card/50 p-5 text-[15px] leading-7 text-stone-400">
-          Экран этой точки ещё куётся — текст появится здесь позже.
-        </p>
+        <P>
+          История современной скульптурной набережной началась в 1991 году. Тогда
+          Петрозаводск получил от американского города-побратима Дулута композицию
+          «Рыбаки». Её автор — скульптор Рафаэль Консуэгра.
+        </P>
+        <P>
+          Два металлических рыбака забрасывают сеть в воду. По замыслу автора, один из них
+          символизирует русского рыбака, другой — американского. Вместе они показывают
+          совместный труд и связь двух городов, расположенных у больших озёр.
+        </P>
+        <P>
+          «Рыбаки» положили начало традиции устанавливать на набережной скульптуры,
+          подаренные городами-побратимами и партнёрами Петрозаводска. Постепенно набережная
+          превратилась в своеобразный музей под открытым небом. Здесь встречаются разные
+          художественные языки и культурные традиции. Каждая скульптура рассказывает не
+          только о своём авторе, но и о городе, который её подарил.
+        </P>
+        <P>
+          Вы прошли весь путь. Вы увидели город, который начинался с железа и огня, вырос
+          благодаря труду мастеров и инженеров, стал местом науки, искусства и поэзии.
+        </P>
       </div>
+      <PrimaryButton onClick={onDone}>Завершить маршрут</PrimaryButton>
+    </div>
+  );
+}
+
+function ConclusionScreen({ onFinish }: { onFinish: () => void }) {
+  return (
+    <div className="space-y-8">
+      <header className="space-y-3 text-center">
+        <p className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-amber-500">
+          <Flame className="h-4 w-4 animate-flicker" />
+          Путь завершён
+          <Flame className="h-4 w-4 animate-flicker" />
+        </p>
+        <h1 className="font-serif text-3xl leading-tight text-foreground">Спасибо за путь</h1>
+      </header>
+      <div className="space-y-4">
+        <P>
+          Вот мы и завершили наш путь. Мы прошли по улицам Петрозаводска, прикоснулись к его
+          истории и увидели, сколько разных судеб, идей и открытий скрывается за знакомыми
+          местами.
+        </P>
+        <P>
+          Когда-то здесь разжигали огонь заводских печей, чтобы выплавлять железо и создавать
+          орудия. Со временем город рос и менялся: появлялись новые здания, развивалась
+          наука, звучали стихи, открывались театры, а на берегу Онего рождались новые
+          произведения искусства.
+        </P>
+        <P>
+          Посмотрите вокруг. Петрозаводск — это не только то, что было создано много лет
+          назад. Это город, чья история продолжается прямо сейчас. И однажды в ней появится
+          место и для ваших собственных открытий.
+        </P>
+        <P>
+          Спасибо, что прошли этот путь со мной. Пусть огонь любопытства не гаснет, а
+          каждая новая дорога открывает вам ещё одну историю.
+        </P>
+      </div>
+      <PrimaryButton onClick={onFinish}>
+        <Home className="h-5 w-5" />
+        На главную
+      </PrimaryButton>
     </div>
   );
 }
