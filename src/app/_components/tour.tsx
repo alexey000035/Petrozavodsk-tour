@@ -501,7 +501,15 @@ function PhotoTask({ onDone }: { onDone: () => void }) {
   );
 }
 
-function RiddleTask({ onDone }: { onDone: () => void }) {
+function RiddleTask({
+  onDone,
+  acceptedAnswers = ["кивач", "водопад кивач"],
+  placeholder = "Что это за чудо природы?",
+}: {
+  onDone: () => void;
+  acceptedAnswers?: string[];
+  placeholder?: string;
+}) {
   const [value, setValue] = useState("");
   const [status, setStatus] = useState<"idle" | "wrong" | "correct">("idle");
 
@@ -514,7 +522,15 @@ function RiddleTask({ onDone }: { onDone: () => void }) {
       .replace(/[^a-zа-я\s-]/gi, "")
       .replace(/\s+/g, " ")
       .trim();
-    if (normalized === "кивач" || normalized === "водопад кивач") {
+    const normalizedAnswers = acceptedAnswers.map((answer) =>
+      answer
+        .toLowerCase()
+        .replace(/ё/g, "е")
+        .replace(/[^a-zа-я\s-]/gi, "")
+        .replace(/\s+/g, " ")
+        .trim()
+    );
+    if (normalizedAnswers.includes(normalized)) {
       setStatus("correct");
       window.setTimeout(onDone, 1200);
     } else {
@@ -543,7 +559,7 @@ function RiddleTask({ onDone }: { onDone: () => void }) {
         }}
         disabled={status === "correct"}
         autoComplete="off"
-        placeholder="Что это за чудо природы?"
+        placeholder={placeholder}
         className="w-full rounded-xl border border-input bg-black/40 px-4 py-3.5 text-base text-foreground outline-none transition placeholder:text-stone-600 focus:border-amber-500/60 focus:ring-2 focus:ring-amber-500/30 disabled:opacity-70"
       />
       {status === "correct" ? (
@@ -902,8 +918,34 @@ function Stop5Screen({ onDone }: { onDone: () => void }) {
         </P>
       </HistoryCard>
       <TaskCard icon={<Hammer className="h-4 w-4" />}>
-        <p>...</p>
-        <PrimaryButton onClick={onDone}>Я выполнил задание</PrimaryButton>
+        <p>
+          Гаскойн совершенствовал механизмы, опираясь на знания и инженерную смекалку, но
+          мудрость народа тоже помогала людям познавать мир. Карелы передавали свой опыт
+          через сказания и загадки, в которых за простыми словами скрывался глубокий смысл.
+          Разгадайте любую из трех карельских загадок.
+        </p>
+        <div className="space-y-3 rounded-xl border border-border bg-black/30 p-4 text-sm leading-6 text-amber-100/90">
+          <p>
+            <Em>1. Kiehuu, kuohuu – ij kuonah ylitse valuu</Em>
+            <br />
+            «Кипит-бурлит — никогда через край не переливается».
+          </p>
+          <p>
+            <Em>2. Kezällä helajau da pajuu, talvella aitassa eläu</Em>
+            <br />
+            «Летом звенит-поет, зимой в амбаре живет».
+          </p>
+          <p>
+            <Em>3. Kädetöin, jalatoin seinällä nousou</Em>
+            <br />
+            «Без рук, без ног на печке поднимается».
+          </p>
+        </div>
+        <RiddleTask
+          onDone={onDone}
+          acceptedAnswers={["Озеро", "Коса", "Тесто"]}
+          placeholder="Введите ответ на любую загадку"
+        />
       </TaskCard>
     </div>
   );
